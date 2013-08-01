@@ -1,4 +1,6 @@
-function smartDoubleQuote () {
+TypeSmart = {};
+
+TypeSmart.smartDoubleQuote = function () {
     var cursor = Cursor.new ();
     
     // If the previous character is a whitespace,
@@ -11,9 +13,10 @@ function smartDoubleQuote () {
         cursor.insert ("”");
         return false;
     }
-}
+    return true;
+};
 
-function smartSingleQuote () {
+TypeSmart.smartSingleQuote = function () {
     var cursor = Cursor.new ();
 
     // If the previous character is a whitespace,
@@ -26,22 +29,57 @@ function smartSingleQuote () {
         cursor.insert ("’");
         return false;
     }
-}
+    return true;
+};
 
-var default_custom_triggers = {
+// Smiley face: "😊".length is 2
+// So         +                                                   +
+// text and so|me more  -> cursor.insert ("😊") -> text and so😊m|me more
+//            +                                                   +
+// TODO: check if this should solved in libcursor.js
+TypeSmart.smileReplace = function () {
+    var cursor = Cursor.new ();
+    if (cursor.getText (-1, 0) == ":") {
+        cursor.delete (-1).insert ("😊").moveBackward (1);
+        return false;
+    }
+    else if (cursor.getText (-2, 0) == ":-") {
+        cursor.delete (-2).insert ("😊").moveBackward (1);
+        return false;
+    }
+    return true;
+};
+
+TypeSmart.sadReplace = function () {
+    var cursor = Cursor.new ();
+    if (cursor.getText (-1, 0) == ":") {
+        cursor.delete (-1).insert ("😞").moveBackward (1);
+        return false;
+    }
+    else if (cursor.getText (-2, 0) == ":-") {
+        cursor.delete (-2).insert ("😞").moveBackward (1);
+        return false;
+    }
+    return true;
+};
+
+TypeSmart.default_custom_triggers = {
     'typeSmartSmartQuotes' : {
-        '"' : smartDoubleQuote,
-        "'" : smartSingleQuote
+        '"' : TypeSmart.smartDoubleQuote,
+        "'" : TypeSmart.smartSingleQuote
+    },
+    'typeSmartEmoticons' : {
+        ')' : TypeSmart.smileReplace,
+        "(" : TypeSmart.sadReplace
     }
 };
 
-var default_replacements = {
-
+TypeSmart.default_replacements = {
     'typeSmartEmoticons' : {
-        ":)" : "😊",
-        ":-)": "😊",
-        ":(" : "😞",
-        ":-(": "😞",
+        // ":)" : "😊",
+        // ":-)": "😊",
+        // ":(" : "😞",
+        // ":-(": "😞",
         "<3" : "♥"
     },
 
@@ -75,23 +113,23 @@ var default_replacements = {
 //         "blah": "bleh"
 //     }
 // };
-function mergeDicts (dict1, dict2) {
+TypeSmart.mergeDicts = function (dict1, dict2) {
     var result = {};
     for (key in dict1) { result [key] = dict1 [key];}
     for (key in dict2) {
         if ((key in result) &&
             (typeof (result [key]) == 'object') &&
             (typeof (dict2 [key]) == 'object')) {
-            result [key] = mergeDicts (result [key], dict2 [key]);
+            result [key] = TypeSmart.mergeDicts (result [key], dict2 [key]);
         }
         else {
             result [key] = dict2 [key];
         }
     }
     return result;
-}
+};
 
-function makeReplacementFunctions (replacements) {
+TypeSmart.makeReplacementFunctions = function (replacements) {
     var replacement_functions = {};
     for (replacement_string in replacements) {
         var trigger = replacement_string [replacement_string.length - 1];
@@ -141,9 +179,8 @@ function makeReplacementFunctions (replacements) {
         replacement_functions [trigger] = final_func_to_trigger;
     }
     return replacement_functions;
-}
+};
 
-TypeSmart = {};
 TypeSmart.attachKeypressHandler = function (element) {
     
     // Merge user-defined replacement patterns
@@ -154,9 +191,10 @@ TypeSmart.attachKeypressHandler = function (element) {
     if (typeof my_custom_triggers == "undefined") {
         var my_custom_triggers = {};
     }
-    var replacements = mergeDicts (my_replacements, default_replacements);
-    var custom_triggers = mergeDicts (my_custom_triggers,
-                                      default_custom_triggers);
+    var replacements = TypeSmart.mergeDicts (my_replacements,
+                                   TypeSmart.default_replacements);
+    var custom_triggers = TypeSmart.mergeDicts (my_custom_triggers,
+                                      TypeSmart.default_custom_triggers);
     
     // Strip the class names away
     // Say, replacement is as following.
@@ -229,14 +267,14 @@ TypeSmart.attachKeypressHandler = function (element) {
     // NOTE: These function, on a successful insertion, return false
     //       indicating that the insersion has been taken care of
     //       and the default response to keypress should not be executed.
-    replacement_functions = mergeDicts (
+    replacement_functions = TypeSmart.mergeDicts (
         replacement_functions,
 
-        // makeReplacementFunctions
+        // TypeSmart.makeReplacementFunctions
         // converts replacement pairs like
         // '123' : 'one-two-three' to trigger-char and func pairs like
         // '3' : funcOneTwoThree
-        makeReplacementFunctions (final_replacements)
+        TypeSmart.makeReplacementFunctions (final_replacements)
     );
 
     var handler = function (event) {
