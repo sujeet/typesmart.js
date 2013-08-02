@@ -129,6 +129,26 @@ TypeSmart.mergeDicts = function (dict1, dict2) {
     return result;
 };
 
+// Convert patterns like
+// replacements = {
+//     '123' : "one-two-three",
+//     '[wow]' : '<exclamation>'
+// }
+// 
+// To replacement functions like
+// functions_from_patterns = {
+//     '3' : funcOneTwoThree,
+//     ']' : exclamationFunc
+// }
+// 
+// Where funcOneTwoThree() will be called whenever 3 is pressed.
+// when called, funcOneTwoThree will check whether the string "12"
+// is right before the cursor, and if it is, it should insert
+// delete that "12" and insert "one-two-three" instead.
+// 
+// NOTE: These function, on a successful insertion, return false
+//       indicating that the insersion has been taken care of
+//       and the default response to keypress should not be executed.
 TypeSmart.makeReplacementFunctions = function (replacements) {
     var replacement_functions = {};
     for (replacement_string in replacements) {
@@ -191,10 +211,14 @@ TypeSmart.attachKeypressHandler = function (element) {
     if (typeof my_custom_triggers == "undefined") {
         var my_custom_triggers = {};
     }
-    var replacements = TypeSmart.mergeDicts (my_replacements,
-                                   TypeSmart.default_replacements);
-    var custom_triggers = TypeSmart.mergeDicts (my_custom_triggers,
-                                      TypeSmart.default_custom_triggers);
+    var replacements = TypeSmart.mergeDicts (
+        my_replacements,
+        TypeSmart.default_replacements
+    );
+    var custom_triggers = TypeSmart.mergeDicts (
+        my_custom_triggers,
+        TypeSmart.default_custom_triggers
+    );
     
     // Strip the class names away
     // Say, replacement is as following.
@@ -246,34 +270,10 @@ TypeSmart.attachKeypressHandler = function (element) {
             }
         }
     }
-        
-    // Now, convert patterns like
-    // replacements = {
-    //     '123' : "one-two-three",
-    //     '[wow]' : '<exclamation>'
-    // }
-    // 
-    // To replacement functions like
-    // functions_from_patterns = {
-    //     '3' : funcOneTwoThree,
-    //     ']' : exclamationFunc
-    // }
-    // 
-    // Where funcOneTwoThree() will be called whenever 3 is pressed.
-    // when called, funcOneTwoThree will check whether the string "12"
-    // is right before the cursor, and if it is, it should insert
-    // delete that "12" and insert "one-two-three" instead.
-    // 
-    // NOTE: These function, on a successful insertion, return false
-    //       indicating that the insersion has been taken care of
-    //       and the default response to keypress should not be executed.
+    
     replacement_functions = TypeSmart.mergeDicts (
         replacement_functions,
-
-        // TypeSmart.makeReplacementFunctions
-        // converts replacement pairs like
-        // '123' : 'one-two-three' to trigger-char and func pairs like
-        // '3' : funcOneTwoThree
+        // Convert patterns like to functions
         TypeSmart.makeReplacementFunctions (final_replacements)
     );
 
@@ -285,11 +285,21 @@ TypeSmart.attachKeypressHandler = function (element) {
         }
         else return true;
     };
-        
+    
     element.onkeypress = handler;
 };
 
 TypeSmart.init = function () {
+    // Load libcursor
+    var libcursor = document.createElement ("script");
+    libcursor.setAttribute ('type', 'text/javascript');
+    libcursor.setAttribute (
+        'src',
+        'http://raw.github.com/sujeetgholap/libcursor/master/libcursor.js'
+    );
+    document.head.appendChild (libcursor);
+    
+    // Attach keypress handlers to textareas and contenteditables.
     var attachableElements = document.getElementsByClassName ('typeSmart');
     for (var i = 0; i < attachableElements.length; i++) {
         TypeSmart.attachKeypressHandler (attachableElements [i]);
