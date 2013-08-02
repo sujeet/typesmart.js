@@ -32,54 +32,19 @@ TypeSmart.smartSingleQuote = function () {
     return true;
 };
 
-// Smiley face: "😊".length is 2
-// So         +                                                   +
-// text and so|me more  -> cursor.insert ("😊") -> text and so😊m|me more
-//            +                                                   +
-// TODO: check if this should solved in libcursor.js
-TypeSmart.smileReplace = function () {
-    var cursor = Cursor.new ();
-    if (cursor.getText (-1, 0) == ":") {
-        cursor.delete (-1).insert ("😊").moveBackward (1);
-        return false;
-    }
-    else if (cursor.getText (-2, 0) == ":-") {
-        cursor.delete (-2).insert ("😊").moveBackward (1);
-        return false;
-    }
-    return true;
-};
-
-TypeSmart.sadReplace = function () {
-    var cursor = Cursor.new ();
-    if (cursor.getText (-1, 0) == ":") {
-        cursor.delete (-1).insert ("😞").moveBackward (1);
-        return false;
-    }
-    else if (cursor.getText (-2, 0) == ":-") {
-        cursor.delete (-2).insert ("😞").moveBackward (1);
-        return false;
-    }
-    return true;
-};
-
 TypeSmart.default_custom_triggers = {
     'typeSmartSmartQuotes' : {
         '"' : TypeSmart.smartDoubleQuote,
         "'" : TypeSmart.smartSingleQuote
-    },
-    'typeSmartEmoticons' : {
-        ')' : TypeSmart.smileReplace,
-        "(" : TypeSmart.sadReplace
     }
 };
 
 TypeSmart.default_replacements = {
     'typeSmartEmoticons' : {
-        // ":)" : "😊",
-        // ":-)": "😊",
-        // ":(" : "😞",
-        // ":-(": "😞",
+        ":)" : "😊",
+        ":-)": "😊",
+        ":(" : "😞",
+        ":-(": "😞",
         "<3" : "♥"
     },
 
