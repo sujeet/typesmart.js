@@ -32,13 +32,54 @@ TypeSmart.smartSingleQuote = function () {
     return true;
 };
 
+TypeSmart.smartQuoteTextReplace = function (text) {
+    // Strategy :
+    // 1) First replace all quotes following whitespace into opening ones.
+    // 2) Then all those which are after any character into closing ones.
+    // 3) Then remaining into opening ones.
+    //
+    // Example : (curley quotes are denoted by [ and ])
+    //    "He went home and called his mom. 'go home, don't stay' said mom."
+    // 1) "He went home and called his mom. ‘go home, don't stay' said mom."
+    //                                      ^
+    // 2) "He went home and called his mom. ‘go home, don’t stay’ said mom.”
+    //                                                   ^      ^          ^
+    // 2) “He went home and called his mom. ‘go home, don’t stay’ said mom.”
+    //    ^
+    return text.replace(/(\s)'/g, "$1\u2018") // Opening singles
+               .replace(/(\s)"/g, "$1\u201c") // Opening doubles
+                                              // After one or more whitespace.
+        .replace(/(.)'/g, "$1\u2019")  // Closing singles
+        .replace(/(.)"/g, "$1\u201d") // Closing doubles
+        .replace(/'/g, "\u2018")  // Opening singles
+        .replace(/"/g, "\u201c"); // Opening doubles
+};
+
+// format -> {
+//     'classname' : {
+//         'char-to-press-to-trigger-func1' : func1,
+//         'char-to-press-to-trigger-func2' : func2,
+//     },
+//     'classname2' : {
+//         'char-to-press-to-trigger-func3' : func3,
+//     }
+// };
 TypeSmart.default_custom_triggers = {
-    'typeSmartSmartQuotes' : {
+    'typeSmartTypography' : {
         '"' : TypeSmart.smartDoubleQuote,
         "'" : TypeSmart.smartSingleQuote
     }
 };
 
+// format -> {
+//     'classname' : {
+//         'string to be replaced' : 'replace with this one',
+//         'str2'                  : 'str3'
+//     },
+//     'classname2' : {
+//         'another str to be replaced' : 'another replacement'
+//     }
+// };
 TypeSmart.default_replacements = {
     'typeSmartEmoticons' : {
         ":)" : "😊",
@@ -51,6 +92,22 @@ TypeSmart.default_replacements = {
     'typeSmartTypography' : {
         "...": "…",
         "--" : "—"
+    }
+};
+
+// format -> {
+//     'classname' : {
+//         'description of func1' : func1, // accepts and returns a string
+//         'description of func2' : func2
+//     },
+//     'classname2' : {
+//         'description of func3' : func3
+//     }
+// };
+TypeSmart.default_paste_modifiers = {
+    'typeSmartTypography' : {
+        'replace single and double dumb quotes with smart ones' :
+        TypeSmart.smartQuoteTextReplace
     }
 };
 
@@ -166,7 +223,110 @@ TypeSmart.makeReplacementFunctions = function (replacements) {
     return replacement_functions;
 };
 
-TypeSmart.attachKeypressHandler = function (element) {
+Array.prototype.contains = function (element) {
+    for (var i = 0; i < this.length; i++) {
+        if (this [i] == element) return true;
+    }
+    return false;
+};
+
+// dict = {
+//     "key1" : {
+//         "foo" : bar,
+//         "blah" : bleh
+//     },
+//     "key2" : {
+//         1 : 2,
+//         3 : 4
+//     },
+//     5 : {
+//         9 : "nine",
+//         "88" : 99
+//     }
+// };
+// whiteList = ["key1", 5, something_else];
+// unifyWithKeyWhitelist (dict, whiteList)
+// returns -> {
+//     'foo' : bar,
+//     'blah': bleh,
+//      9    : "nine",
+//     "88"  : 99
+// }
+TypeSmart.unifyWithKeyWhitelist = function (object, whiteList) {
+    var final_object = {};
+    for (key in object) {
+        if (whiteList.contains (key)) {
+            final_object = TypeSmart.mergeDicts (final_object, object [key]);
+        }
+    }
+    return final_object;
+};
+
+TypeSmart.getPasteHandler = function (class_list) {
+    // Merge user-defined replacement patterns
+    // and replacement-functions with the default ones.
+    if (typeof my_replacements == "undefined") {
+        var my_replacements = {};
+    }
+    if (typeof my_paste_modifiers == "undefined") {
+        var my_paste_modifiers = {};
+    }
+
+    // replacement function directly from the text patterns.
+    var replacements = TypeSmart.unifyWithKeyWhitelist (
+        TypeSmart.mergeDicts (
+            my_replacements,
+            TypeSmart.default_replacements
+        ),
+        class_list
+    );
+    var direct_replacements_func = (function (replacements) {
+
+        return function (text) {
+            for (to_be_replaced in replacements) {
+                text = text.split (to_be_replaced)
+                           .join (replacements [to_be_replaced]);
+            }
+            return text;
+        };
+
+    })(replacements);
+
+    // replacement function combining pre-defined replacement functions
+    var paste_modifiers = TypeSmart.unifyWithKeyWhitelist (
+        TypeSmart.mergeDicts (
+            my_paste_modifiers,
+            TypeSmart.default_paste_modifiers
+        ),
+        class_list
+    );
+    
+    var combined_from_pre_defined =  direct_replacements_func;
+    for (discription in paste_modifiers) {
+        var next_func = paste_modifiers [discription];
+        combined_from_pre_defined = (
+            function (func1, func2){
+                return function (text) {
+                    return func1 (func2 (text));
+                };
+            }
+        )(combined_from_pre_defined, next_func);
+    }
+    
+    var handler = (
+        function (replacement_func) {
+            return function (event) {
+                var pasted_text = event.clipboardData.getData ('text/plain');
+                Cursor.new ().insert (replacement_func (pasted_text));
+                return false;
+            };
+        }
+    )(combined_from_pre_defined);
+    return handler;
+};
+
+// Create and return a function which should be triggered on a keypress
+TypeSmart.getKeypressHandler = function (class_list) {
     
     // Merge user-defined replacement patterns
     // and letter-trigger-handlers with the default ones.
@@ -208,15 +368,10 @@ TypeSmart.attachKeypressHandler = function (element) {
     //     "str2" : "result2"
     // };
     // As element is not of class "thirdName", its patterns are dropped.
-    var final_replacements = {};
-    for (control_class_name in replacements) {
-        if (element.classList.contains (control_class_name)) {
-            for (str_to_replace in replacements [control_class_name]) {
-                final_replacements [str_to_replace] =
-                    replacements [control_class_name] [str_to_replace];
-            }
-        }
-    }
+    var final_replacements = TypeSmart.unifyWithKeyWhitelist (
+        replacements,
+        class_list
+    );
     
     // Similarly, strip the classnames from the relpacement functions.
     // The resultant replacement_functions will be of the form
@@ -226,32 +381,47 @@ TypeSmart.attachKeypressHandler = function (element) {
     // };
     // This means when <another_char> character is typed,
     // another_func () will be called.
-    var replacement_functions = {};
-    for (control_class_name in custom_triggers) {
-        if (element.classList.contains (control_class_name)) {
-            for (char_trigger in custom_triggers [control_class_name]) {
-                replacement_functions [char_trigger] =
-                    custom_triggers [control_class_name] [char_trigger];
-            }
-        }
-    }
+    var replacement_functions = TypeSmart.unifyWithKeyWhitelist (
+        custom_triggers,
+        class_list
+    );
     
     replacement_functions = TypeSmart.mergeDicts (
         replacement_functions,
-        // Convert patterns like to functions
+
+        // Convert patterns to functions
         TypeSmart.makeReplacementFunctions (final_replacements)
     );
 
-    var handler = function (event) {
-        var character = getChar (event || window.event);
-        if (!character) return true; // special key
-        else if (character in replacement_functions) {
-            return replacement_functions [character] ();
+    var getChar = function (event) {
+        if (event.which!=0 && event.charCode!=0) {
+            return String.fromCharCode(event.which);
         }
-        else return true;
+        else {
+            return null; // special key
+        }
     };
+
+    var handler = (
+        function (replacement_functions, getChar) {
+            return function (event) {
+                var character = getChar (event || window.event);
+                if (!character) return true; // special key
+                else if (character in replacement_functions) {
+                    return replacement_functions [character] ();
+                }
+                else return true;
+            };
+        }
+    )(replacement_functions, getChar);
     
-    element.onkeypress = handler;
+    return handler;
+};
+
+TypeSmart.attachHandlers = function (element) {
+    var class_list = element.className.split (/\s+/);
+    element.onkeypress = TypeSmart.getKeypressHandler (class_list);
+    element.onpaste = TypeSmart.getPasteHandler (class_list);
 };
 
 TypeSmart.init = function () {
@@ -260,13 +430,13 @@ TypeSmart.init = function () {
     libcursor.setAttribute ('type', 'text/javascript');
     libcursor.setAttribute (
         'src',
-        'http://raw.github.com/sujeetgholap/libcursor/master/libcursor.js'
+        '//raw.github.com/sujeetgholap/libcursor/master/libcursor.js'
     );
     document.head.appendChild (libcursor);
     
     // Attach keypress handlers to textareas and contenteditables.
     var attachableElements = document.getElementsByClassName ('typeSmart');
     for (var i = 0; i < attachableElements.length; i++) {
-        TypeSmart.attachKeypressHandler (attachableElements [i]);
+        TypeSmart.attachHandlers (attachableElements [i]);
     }
 };
