@@ -57,17 +57,18 @@ TypeSmart.smartQuoteTextReplace = function (text) {
 
 // format -> {
 //     'classname' : {
-//         'char-to-press-to-trigger-func1' : func1,
-//         'char-to-press-to-trigger-func2' : func2,
+//         'string to trigger func1' : func1,
+//         'string to trigger func2' : func2,
 //     },
 //     'classname2' : {
-//         'char-to-press-to-trigger-func3' : func3,
+//         'string to trigger func3' : func3,
 //     }
 // };
 TypeSmart.default_custom_triggers = {
     'typeSmartTypography' : {
         '"' : TypeSmart.smartDoubleQuote,
-        "'" : TypeSmart.smartSingleQuote
+        "'" : TypeSmart.smartSingleQuote,
+        "\\random" : (function () {Cursor.new().insert("COMMAND ACTIVATED");})
     }
 };
 
@@ -155,12 +156,14 @@ TypeSmart.mergeDicts = function (dict1, dict2) {
 // replacements = {
 //     '123' : "one-two-three",
 //     '[wow]' : '<exclamation>'
+//     '\spellcheck' : spellcheck_func
 // }
 // 
 // To replacement functions like
 // functions_from_patterns = {
 //     '3' : funcOneTwoThree,
 //     ']' : exclamationFunc
+//     'k' : spellcheck_func_modified
 // }
 // 
 // Where funcOneTwoThree() will be called whenever 3 is pressed.
@@ -181,19 +184,33 @@ TypeSmart.makeReplacementFunctions = function (replacements) {
         );
         
         var func_to_trigger = (
-            function (prefix_to_match, replacement_string) {
+            function (prefix_to_match, replacement_string, replacements) {
                 return function () {
                     var cursor = Cursor.new ();
                     var prefix = cursor.getText (- prefix_to_match.length, 0);
                     if (prefix == prefix_to_match) {
-                        cursor.deleteBackward (prefix.length)
-                            .insert (replacements [replacement_string]);
-                        return false;
+                        cursor.deleteBackward (prefix.length);
+
+                        // Check if we need to insert a string
+                        // or call a function.
+                        if (typeof replacements [replacement_string]
+                            == 'string') {
+                            cursor.insert (replacements [replacement_string]);
+                            return false;
+                        }
+                        else if (typeof replacements [replacement_string]
+                                 == 'function') {
+                            replacements [replacement_string] ();
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
                     }
                     else return true;
                 };
             }
-        )(prefix_to_match, replacement_string);
+        )(prefix_to_match, replacement_string, replacements);
 
         // One trigger might fire more than one functions
         // For example "(" needs to fire functions for ":(" and ":-("
@@ -376,10 +393,10 @@ TypeSmart.getKeypressHandler = function (class_list) {
     // Similarly, strip the classnames from the relpacement functions.
     // The resultant replacement_functions will be of the form
     // replacement_functions = {
-    //     '<character-which-triggers-function>' : function_to_be_executed,
-    //     '<another_char>' : another_func
+    //     'string to trigger the function' : function_to_be_executed,
+    //     'another string' : another_func
     // };
-    // This means when <another_char> character is typed,
+    // This means when 'another string' is typed,
     // another_func () will be called.
     var replacement_functions = TypeSmart.unifyWithKeyWhitelist (
         custom_triggers,
@@ -387,9 +404,8 @@ TypeSmart.getKeypressHandler = function (class_list) {
     );
     
     replacement_functions = TypeSmart.mergeDicts (
-        replacement_functions,
-
         // Convert patterns to functions
+        TypeSmart.makeReplacementFunctions (replacement_functions),
         TypeSmart.makeReplacementFunctions (final_replacements)
     );
 
