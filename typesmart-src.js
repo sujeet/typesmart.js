@@ -200,8 +200,7 @@ TypeSmart.makeReplacementFunctions = function (replacements) {
                         }
                         else if (typeof replacements [replacement_string]
                                  == 'function') {
-                            replacements [replacement_string] ();
-                            return false;
+                            return replacements [replacement_string] ();
                         }
                         else {
                             return true;
@@ -282,17 +281,17 @@ TypeSmart.unifyWithKeyWhitelist = function (object, whiteList) {
 TypeSmart.getPasteHandler = function (class_list) {
     // Merge user-defined replacement patterns
     // and replacement-functions with the default ones.
-    if (typeof my_replacements == "undefined") {
-        var my_replacements = {};
+    if (typeof TypeSmart.my_replacements == "undefined") {
+        TypeSmart.my_replacements = {};
     }
-    if (typeof my_paste_modifiers == "undefined") {
-        var my_paste_modifiers = {};
+    if (typeof TypeSmart.my_paste_modifiers == "undefined") {
+        TypeSmart.my_paste_modifiers = {};
     }
 
     // replacement function directly from the text patterns.
     var replacements = TypeSmart.unifyWithKeyWhitelist (
         TypeSmart.mergeDicts (
-            my_replacements,
+            TypeSmart.my_replacements,
             TypeSmart.default_replacements
         ),
         class_list
@@ -312,7 +311,7 @@ TypeSmart.getPasteHandler = function (class_list) {
     // replacement function combining pre-defined replacement functions
     var paste_modifiers = TypeSmart.unifyWithKeyWhitelist (
         TypeSmart.mergeDicts (
-            my_paste_modifiers,
+            TypeSmart.my_paste_modifiers,
             TypeSmart.default_paste_modifiers
         ),
         class_list
@@ -347,18 +346,18 @@ TypeSmart.getKeypressHandler = function (class_list) {
     
     // Merge user-defined replacement patterns
     // and letter-trigger-handlers with the default ones.
-    if (typeof my_replacements == "undefined") {
-        var my_replacements = {};
+    if (typeof TypeSmart.my_replacements == "undefined") {
+        TypeSmart.my_replacements = {};
     }
-    if (typeof my_custom_triggers == "undefined") {
-        var my_custom_triggers = {};
+    if (typeof TypeSmart.my_custom_triggers == "undefined") {
+        TypeSmart.my_custom_triggers = {};
     }
     var replacements = TypeSmart.mergeDicts (
-        my_replacements,
+        TypeSmart.my_replacements,
         TypeSmart.default_replacements
     );
     var custom_triggers = TypeSmart.mergeDicts (
-        my_custom_triggers,
+        TypeSmart.my_custom_triggers,
         TypeSmart.default_custom_triggers
     );
     
@@ -439,7 +438,7 @@ TypeSmart.attachHandlers = function (element) {
     element.onkeypress = TypeSmart.getKeypressHandler (class_list);
     element.onpaste = TypeSmart.getPasteHandler (class_list);
 };
-
+  
 TypeSmart.init = function () {
     // Load libcursor
     var libcursor = document.createElement ("script");
@@ -449,7 +448,7 @@ TypeSmart.init = function () {
         '//raw.github.com/sujeetgholap/libcursor/master/libcursor.js'
     );
     document.head.appendChild (libcursor);
-    
+
     // Attach keypress handlers to textareas and contenteditables.
     var attachableElements = document.getElementsByClassName ('typeSmart');
     for (var i = 0; i < attachableElements.length; i++) {
