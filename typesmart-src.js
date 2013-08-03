@@ -445,7 +445,7 @@ TypeSmart.init = function () {
     libcursor.setAttribute ('type', 'text/javascript');
     libcursor.setAttribute (
         'src',
-        '//raw.github.com/sujeetgholap/libcursor/master/libcursor.js'
+        '//sujeetgholap.github.io/libcursor/libcursor.js'
     );
     document.head.appendChild (libcursor);
 

@@ -14,7 +14,7 @@ TypeSmart was built with the intention to bring typographic niceties to on-page 
 <!-- Source TypeSmart into your page. -->
 <script
    type='text/javascript'
-   src='//github.com/sujeetgholap/typesmart.js/raw/master/typesmart.js'>
+   src='//sujeetgholap.github.io/typesmart.js/typesmart.js'>
 </script>
 
 <!-- Make editing areas smart by adding the classes
