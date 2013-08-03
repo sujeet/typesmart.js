@@ -3,30 +3,68 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>TypeSmart.js by sujeetgholap</title>
-
+    <title>TypeSmart.js by sujeetgholap
+    </title>
+    <link href="http://fonts.googleapis.com/css?family=Habibi" rel="stylesheet" type="text/css">
+    <script type='text/javascript'src='http://sujeetgholap.github.io/typesmart.js/typesmart.js'></script>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <script src="javascripts/scale.fix.js">
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js">
+        </script>
     <![endif]-->
   </head>
   <body>
     <div class="wrapper">
       <header>
-        <h1 class="header">TypeSmart.js</h1>
-        <p class="header">JavaScript to make textarea-like objects typographically smart. Automatic smart quotes, ellipsis, em - dashes and much more!</p>
+        <h1 class="header">TypeSmart.js
+        </h1>
+        <p class="header">JavaScript to bring typographic smartness to in-page editing. Smart quotes, ellipsis, em-dashes and more!
+        </p>
 
         <ul>
-          <li class="download"><a class="buttons" href="https://github.com/sujeetgholap/typesmart.js/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/sujeetgholap/typesmart.js/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/sujeetgholap/typesmart.js">View On GitHub</a></li>
+          <li>
+            <i class='icon-pencil'></i>
+            <a class="buttons" href="#using-typesmart">Using TypeSmart
+            </a>
+          </li>
+          <li>
+            <i class='icon-pencil'></i>
+            <a class="buttons" href="#customizing-typesmart">Customizing TypeSmart
+            </a>
+          </li>
+          <li>
+            <i class='icon-edit'></i>
+            <a class="buttons" href="#customizing-typesmart">Live Demo
+            </a>
+          </li>
+          <li>
+            <i class='icon-dropbox'></i>
+            <a class="buttons" href="#">Goodies
+            </a>
+          </li>
+          <li>
+            <i class='icon-github'></i>
+            <a class="buttons" href="https://github.com/sujeetgholap/typesmart.js">View On GitHub
+            </a>
+          </li>
         </ul>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/sujeetgholap">sujeetgholap</a></p>
+        <p class="header">This project is maintained by
+          <a class="header name" href="https://github.com/sujeetgholap">sujeetgholap
+          </a>
+        </p>
 
+        <p>
+          <small>Hosted on
+            <a href="https://pages.github.com">GitHub Pages
+            </a> using the (modified) Dinky theme
+          </small>
+        </p>
 
       </header>
       <section>
@@ -36,8 +74,8 @@
 <p>TypeSmart is an extensible and customizable framework for making textareas and contenteditable elements “smart”.
 TypeSmart was built with the intention to bring typographic niceties to on-page editing spaces.</p>
 
-<h4>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h4>
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
 <li>
@@ -45,8 +83,14 @@ TypeSmart was built with the intention to bring typographic niceties to on-page 
 <li>Automatic ellipsis (…) instead of three periods (...).</li>
 <li>Automatic em-dash (—) instead of minus minus (--).</li>
 <li>Correct apostrophe: <strong>Don't</strong> use straight quotes for apostrophe. Just <strong>don’t</strong>!</li>
-</ul><h4>
-<a name="using-typesmart" class="anchor" href="#using-typesmart"><span class="octicon octicon-link"></span></a>Using TypeSmart</h4>
+</ul>
+<h2>
+<a name="features" class="anchor" href="#try-it"><span class="octicon octicon-link"></span></a>Try it</h2>
+<p> Try typing into the textarea below. Check out double and single quotes, ellipsis, and em-dash. 
+I have thrown in a few smiley faces too... Try ":)", ":(" and "<3". Paste some text and see... </p>
+<textarea class='typeSmart typeSmartTypography typeSmartEmoticons'></textarea>
+<h2>
+<a name="using-typesmart" class="anchor" href="#using-typesmart"><span class="octicon octicon-link"></span></a>Using TypeSmart</h2>
 
 <div class="highlight"><pre><span class="c">&lt;!-- Source TypeSmart into your page. --&gt;</span>
 <span class="nt">&lt;script</span>
@@ -65,8 +109,8 @@ TypeSmart was built with the intention to bring typographic niceties to on-page 
 <span class="nt">&lt;/script&gt;</span>
 </pre></div>
 
-<h4>
-<a name="customizing-typesmart" class="anchor" href="#customizing-typesmart"><span class="octicon octicon-link"></span></a>Customizing TypeSmart</h4>
+<h2>
+<a name="customizing-typesmart" class="anchor" href="#customizing-typesmart"><span class="octicon octicon-link"></span></a>Customizing TypeSmart</h2>
 
 <div class="highlight"><pre><span class="c">&lt;!-- Before initializing TypeSmart,</span>
 <span class="c">     you can define certain variables to extend TypeSmart </span>
@@ -148,11 +192,11 @@ TypeSmart was built with the intention to bring typographic niceties to on-page 
 <span class="nt">&lt;/script&gt;</span>
 </pre></div>
       </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 		
+    <script type='text/javascript'>
+      TypeSmart.init();
+    </script>
   </body>
 </html>

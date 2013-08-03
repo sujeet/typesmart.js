@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Arvo:400,700,400italic);
+@import url(https://fonts.googleapis.com/css?family=Habibi);
 
 /* MeyerWeb Reset */
 
@@ -102,6 +103,15 @@ ul li {
   padding-left: 25px;
 }
 
+textarea {
+  font-family: 'Habibi', serif;
+  font-size: 150%;
+  width: 724px;
+  height: 150px;
+  border: 1px solid #D7D8C8;
+  border-radius: 4px;
+}
+
 ol li {
   list-style: decimal inside;
   padding-left: 20px;
@@ -198,7 +208,7 @@ td {
 
 /* Wrapper */
 .wrapper {
-  width:960px;
+  width:1024px;
 }
 
 
@@ -207,7 +217,7 @@ td {
 header {
 	background-color: #171717;
 	color: #FDFDFB;
-  width:170px;
+  width:200px;
   float:left;
   position:fixed;
 	border: 1px solid #000;
@@ -217,8 +227,7 @@ header {
 	-moz-border-radius-bottomright: 4px;
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
-	padding: 34px 25px 22px 50px;
-	margin: 30px 25px 0 0;
+	padding: 34px 40px 22px 20px;
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -255,49 +264,63 @@ header ul {
 
 header li {
 	list-style-type: none;
-  width:132px;
+  width:200px;
   height:15px;
 	margin-bottom: 12px;
 	line-height: 1em;
 	padding: 6px 6px 6px 7px;
 
-	background: #AF0011;
-	background: -moz-linear-gradient(top, #AF0011 0%, #820011 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
-  background: -webkit-linear-gradient(top, #AF0011 0%,#820011 100%);
-  background: -o-linear-gradient(top, #AF0011 0%,#820011 100%);
-  background: -ms-linear-gradient(top, #AF0011 0%,#820011 100%);
-  background: linear-gradient(top, #AF0011 0%,#820011 100%);
 
 	border-radius:4px;
   border:1px solid #0D0D0D;
 
-	-webkit-box-shadow: inset 0px 1px 1px 0 rgba(233,2,38, 1);
-	box-shadow: inset 0px 1px 1px 0 rgba(233,2,38, 1);
+ background-color: #36780f;
+ background-image: -webkit-gradient(linear, left top, left bottom, from(#36780f), to(#005900));
+ background-image: -webkit-linear-gradient(top, #36780f, #005900);
+ background-image: -moz-linear-gradient(top, #36780f, #005900);
+ background-image: -ms-linear-gradient(top, #36780f, #005900);
+ background-image: -o-linear-gradient(top, #36780f, #005900);
+ background-image: linear-gradient(to bottom, #36780f, #005900);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#36780f, endColorstr=#005900);
 
 }
 
 header li:hover {
-	background: #C3001D;
-	background: -moz-linear-gradient(top, #C3001D 0%, #950119 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
-  background: -webkit-linear-gradient(top, #C3001D 0%,#950119 100%);
-  background: -o-linear-gradient(top, #C3001D 0%,#950119 100%);
-  background: -ms-linear-gradient(top, #C3001D 0%,#950119 100%);
-  background: linear-gradient(top, #C3001D 0%,#950119 100%);
+ background-color: #4ba614;
+ background-image: -webkit-gradient(linear, left top, left bottom, from(#4ba614), to(#008c00));
+ background-image: -webkit-linear-gradient(top, #4ba614, #008c00);
+ background-image: -moz-linear-gradient(top, #4ba614, #008c00);
+ background-image: -ms-linear-gradient(top, #4ba614, #008c00);
+ background-image: -o-linear-gradient(top, #4ba614, #008c00);
+ background-image: linear-gradient(to bottom, #4ba614, #008c00);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4ba614, endColorstr=#008c00);
+
 }
+
+/* header li:hover { */
+/* 	background: #C3001D; */
+/* 	background: -moz-linear-gradient(top, #C3001D 0%, #950119 100%); */
+/*   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd)); */
+/*   background: -webkit-linear-gradient(top, #C3001D 0%,#950119 100%); */
+/*   background: -o-linear-gradient(top, #C3001D 0%,#950119 100%); */
+/*   background: -ms-linear-gradient(top, #C3001D 0%,#950119 100%); */
+/*   background: linear-gradient(top, #C3001D 0%,#950119 100%); */
+/* } */
 
 a.buttons {
 	-webkit-font-smoothing: antialiased;
-	background: url(../images/arrow-down.png) no-repeat;
 	font-weight: normal;
 	text-shadow: rgba(0, 0, 0, 0.4) 0 -1px 0;
-	padding: 2px 2px 2px 22px;
+	padding: 2px 2px 2px 4px;
 	height: 30px;
 }
 
 a.github {
 	background: url(../images/octocat-small.png) no-repeat 1px;
+	padding-left: 22px;
+}
+
+a.goodies {
+	background: url(../images/arrow-down.png) no-repeat 1px;
+	padding-left: 22px;
 }
 
 a.buttons:hover {
@@ -309,7 +332,7 @@ a.buttons:hover {
 /* Section - for main page content */
 
 section {
-  width:650px;
+  width:730px;
   float:right;
   padding-bottom:50px;
 }
