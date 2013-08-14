@@ -6,11 +6,11 @@ TypeSmart.smartDoubleQuote = function () {
     // If the previous character is a whitespace,
     // insert opening quote, else insert cloning quote.
     if (/^\s*$/.test (cursor.getText (-1, 0))) {
-        cursor.insert ("“");
+        cursor.insert ("\u201C");
         return false;
     }
     else {
-        cursor.insert ("”");
+        cursor.insert ("\u201D");
         return false;
     }
     return true;
@@ -22,11 +22,11 @@ TypeSmart.smartSingleQuote = function () {
     // If the previous character is a whitespace,
     // insert opening quote, else insert cloning quote.
     if (/^\s*$/.test (cursor.getText (-1, 0))) {
-        cursor.insert ("‘");
+        cursor.insert ("\u2018");
         return false;
     }
     else {
-        cursor.insert ("’");
+        cursor.insert ("\u2019");
         return false;
     }
     return true;
@@ -83,52 +83,52 @@ TypeSmart.default_custom_triggers = {
 // };
 TypeSmart.default_replacements = {
     'typeSmartEmoticons' : {
-        ":)" : "😊",
-        ":-)": "😊",
+        ":)" : "\uD83D\uDE0A",
+        ":-)": "\uD83D\uDE0A",
 
-        ":(" : "😞",
-        ":-(": "😞",
+        ":(" : "\uD83D\uDE1E",
+        ":-(": "\uD83D\uDE1E",
 
-        "<3" : "♥",
-        ":D" : "😅",
+        "<3" : "\u2665",
+        ":D" : "\uD83D\uDE05",
 
-        ":P" : "😋",
-        ":-P" : "😋",
-        ":p" : "😋",
-        ":-p" : "😋",
+        ":P" : "\uD83D\uDE0B",
+        ":-P" : "\uD83D\uDE0B",
+        ":p" : "\uD83D\uDE0B",
+        ":-p" : "\uD83D\uDE0B",
 
-        ":'(": "😓",
-        "B-)": "😎",
+        ":'(": "\uD83D\uDE13",
+        "B-)": "\uD83D\uDE0E",
 
-        "x-(": "😠",
-        "X-(": "😠",
+        "x-(": "\uD83D\uDE20",
+        "X-(": "\uD83D\uDE20",
         
-        ":-o": "😲"
+        ":-o": "\uD83D\uDE32"
     },
 
     'typeSmartTypography' : {
-        "...": "…",
-        "--" : "—",
-        "?!" : "⁈",
-        "!?" : "⁉",
-        "!!" : "‼"
+        "...": "\u2026",
+        "--" : "\u2014",
+        "?!" : "\u2048",
+        "!?" : "\u2049",
+        "!!" : "\u203C"
     },
     
     'typeSmartMiscUnicode' : {
-        '/musicdoublenote' : '♫',
-        '/musicsinglenote' : '♪',
-        '/darkknight' : '♞',
-        '/star' : '★',
-        '/umbrella' : '☂',
-        '/rupee' : '₹',
-        '/alpha' : 'α',
-        '/beta' : 'β',
-        '/theta': 'θ',
-        '/sigma': 'Σ',
-        '/lambda': 'λ',
-        '/danger': '☠',
-        '/tick' : '✔',
-        '/cross' : '✘'
+        '/musicdoublenote' : '\u266B',
+        '/musicsinglenote' : '\u266A',
+        '/darkknight' : '\u265E',
+        '/star' : '\u2605',
+        '/umbrella' : '\u2602',
+        '/rupee' : '\u20B9',
+        '/alpha' : '\u03B1',
+        '/beta' : '\u03B2',
+        '/theta': '\u03B8',
+        '/sigma': '\u03A3',
+        '/lambda': '\u03BB',
+        '/danger': '\u2620',
+        '/tick' : '\u2714',
+        '/cross' : '\u2718'
     }
 };
 
