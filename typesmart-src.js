@@ -5,7 +5,7 @@ TypeSmart.smartDoubleQuote = function () {
     
     // If the previous character is a whitespace,
     // insert opening quote, else insert cloning quote.
-    if (/^\s*$/.test (cursor.getText (-1, 0))) {
+    if (/^\s*$/.test (cursor.getTextBefore (1))) {
         cursor.insert ("\u201C");
         return false;
     }
@@ -21,7 +21,7 @@ TypeSmart.smartSingleQuote = function () {
 
     // If the previous character is a whitespace,
     // insert opening quote, else insert cloning quote.
-    if (/^\s*$/.test (cursor.getText (-1, 0))) {
+    if (/^\s*$/.test (cursor.getTextBefore (1))) {
         cursor.insert ("\u2018");
         return false;
     }
@@ -223,8 +223,9 @@ TypeSmart.makeReplacementFunctions = function (replacements) {
             function (prefix_to_match, replacement_string, replacements) {
                 return function () {
                     var cursor = Cursor.new ();
-                    var prefix = cursor.getText (- prefix_to_match.length, 0);
+                    var prefix = cursor.getTextBefore(prefix_to_match.length);
                     if (prefix == prefix_to_match) {
+                        cursor.insert ("");
                         cursor.deleteBackward (prefix.length);
 
                         // Check if we need to insert a string
