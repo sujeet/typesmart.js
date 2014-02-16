@@ -4,8 +4,9 @@ TypeSmart.smartDoubleQuote = function () {
     var cursor = Cursor.new ();
     
     // If the previous character is a whitespace,
+    // or opening parenthesize
     // insert opening quote, else insert cloning quote.
-    if (/^\s*$/.test (cursor.getTextBefore (1))) {
+    if (/^\s*$/.test (cursor.getTextBefore (1)) || /^\(*$/.test (cursor.getTextBefore (1))) {
         cursor.insert ("\u201C");
         return false;
     }
@@ -19,9 +20,9 @@ TypeSmart.smartDoubleQuote = function () {
 TypeSmart.smartSingleQuote = function () {
     var cursor = Cursor.new ();
 
-    // If the previous character is a whitespace,
+    // If the previous character is a whitespace or parens,
     // insert opening quote, else insert cloning quote.
-    if (/^\s*$/.test (cursor.getTextBefore (1))) {
+    if (/^\s*$/.test (cursor.getTextBefore (1)) || /^\(*$/.test (cursor.getTextBefore (1))) {
         cursor.insert ("\u2018");
         return false;
     }
@@ -34,7 +35,7 @@ TypeSmart.smartSingleQuote = function () {
 
 TypeSmart.smartQuoteTextReplace = function (text) {
     // Strategy :
-    // 1) First replace all quotes following whitespace into opening ones.
+    // 1) First replace all quotes following whitespace (or parens) into opening ones.
     // 2) Then all those which are after any character into closing ones.
     // 3) Then remaining into opening ones.
     //
@@ -48,6 +49,8 @@ TypeSmart.smartQuoteTextReplace = function (text) {
     //    ^
     return text.replace(/(\s)'/g, "$1\u2018") // Opening singles
                .replace(/(\s)"/g, "$1\u201c") // Opening doubles
+               .replace(/(\()'/g, "$1\u2018") // Opening singles
+               .replace(/(\()"/g, "$1\u201c") // Opening doubles
                                               // After one or more whitespace.
         .replace(/(.)'/g, "$1\u2019")  // Closing singles
         .replace(/(.)"/g, "$1\u201d") // Closing doubles
