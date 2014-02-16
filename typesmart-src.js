@@ -4,8 +4,9 @@ TypeSmart.smartDoubleQuote = function () {
     var cursor = Cursor.new ();
     
     // If the previous character is a whitespace,
+    // or opening parenthesize
     // insert opening quote, else insert cloning quote.
-    if (/^\s*$/.test (cursor.getTextBefore (1))) {
+    if (/^\s*$/.test (cursor.getTextBefore (1)) || /^\(*$/.test (cursor.getTextBefore (1))) {
         cursor.insert ("\u201C");
         return false;
     }
